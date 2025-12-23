@@ -10,43 +10,40 @@ This document outlines the **step-by-step process for developing a new widget** 
 
 Create a new directory for your widget at:
 
-```bash
-app/src/pages/widgets/preview/[widget-name]
-Standard Widget Directory
-bash
-Copy code
+```
+app/src/pages/widgets/preview/[widget-name]/
+```
+
+**Standard Widget Directory:**
+
+```
 [widget-name]/
 ├── settings.js
 ├── front.js
 ├── [WidgetName]Preview.js
 ├── index.scss        # optional
 └── components/       # optional
-File Descriptions
-settings.js
-Defines the widget's configuration options (inputs shown in the editor).
+```
 
-front.js
-Entry point for the widget. Handles lazy loading in the preview environment.
+**File Descriptions:**
 
-[WidgetName]Preview.js
-Main React component containing widget logic and UI.
+- `settings.js`: Defines the widget's configuration options (inputs shown in the editor).
+- `front.js`: Entry point for the widget. Handles lazy loading in the preview environment.
+- `[WidgetName]Preview.js`: Main React component containing widget logic and UI.
+- `index.scss` (optional): SCSS file for widget-specific styling.
+- `components/` (optional): Directory for reusable sub-components.
 
-index.scss (optional)
-SCSS file for widget-specific styling.
+---
 
-components/ (optional)
-Directory for reusable sub-components.
+## ⚙️ Define Settings (`settings.js`)
 
-⚙️ Define Settings (settings.js)
 This file exports a configuration object that determines:
+- How the widget appears in the dashboard
+- What options are available to the user in the editor
 
-How the widget appears in the dashboard
+**Example:**
 
-What options are available to the user in the editor
-
-Example
-js
-Copy code
+```js
 const MyWidgetSettings = {
   id: "my-widget",
   name: "My Widget",
@@ -76,12 +73,17 @@ const MyWidgetSettings = {
 };
 
 export default MyWidgetSettings;
-🚪 Create Entry Point (front.js)
+```
+
+---
+
+## 🚪 Create Entry Point (`front.js`)
+
 This file acts as the bridge between the lazy-loading mechanism and the preview component.
 
-Example
-js
-Copy code
+**Example:**
+
+```js
 import React from "react";
 import MyWidgetPreview from "./MyWidgetPreview";
 
@@ -90,13 +92,17 @@ const Front = (props) => {
 };
 
 export default Front;
-🧠 Implement Component Logic ([WidgetName]Preview.js)
-This is where the actual widget logic and UI are implemented.
-Settings defined in settings.js are passed as props.
+```
 
-Example
-js
-Copy code
+---
+
+## 🧠 Implement Component Logic (`[WidgetName]Preview.js`)
+
+This is where the actual widget logic and UI are implemented. Settings defined in `settings.js` are passed as props.
+
+**Example:**
+
+```js
 import React from "react";
 import "./index.scss";
 
@@ -111,17 +117,25 @@ const MyWidgetPreview = ({ settings }) => {
 };
 
 export default MyWidgetPreview;
-🧾 Register the Widget
-To make the widget available in the application, it must be registered in two places.
+```
 
-5.1 Register Loader (front-index.js)
-Path:
+---
 
-bash
-Copy code
+## 🧾 Register the Widget
+
+To make the widget available in the application, it must be registered in two places:
+
+### 1. Register Loader (`front-index.js`)
+
+**Path:**
+
+```
 app/src/pages/widgets/preview/front-index.js
-js
-Copy code
+```
+
+**Example:**
+
+```js
 const MyWidgetLoadable = React.lazy(() =>
   import(
     /* webpackChunkName: "widget-my-widget" */
@@ -135,41 +149,53 @@ const WIDGETS_LOADABLES = {
     widget: MyWidgetLoadable,
   },
 };
-5.2 Register Settings (widget-templates.js)
-Path:
+```
 
-bash
-Copy code
+### 2. Register Settings (`widget-templates.js`)
+
+**Path:**
+
+```
 app/src/pages/widgets/data/widget-templates.js
-js
-Copy code
+```
+
+**Example:**
+
+```js
 import MyWidgetSettings from "../preview/my-widget/settings";
 
 export const WIDGET_TEMPLATES = {
   "my-widget": MyWidgetSettings,
 };
-💡 Development Tips
-Unique IDs
-Ensure widget IDs and template IDs are globally unique.
+```
 
-Lazy Loading
-The front.js file is crucial for code splitting.
-❌ Do not import heavy components directly in front-index.js.
+---
 
-CSS Scoping
-Use specific class names or CSS modules to avoid style leakage.
+## 💡 Development Tips
 
-🔁 Version Control (Git)
-Create a New Branch
-bash
-Copy code
+- **Unique IDs:** Ensure widget IDs and template IDs are globally unique.
+- **Lazy Loading:** The `front.js` file is crucial for code splitting. ❌ Do not import heavy components directly in `front-index.js`.
+- **CSS Scoping:** Use specific class names or CSS modules to avoid style leakage.
+
+---
+
+## 🔁 Version Control (Git)
+
+**Create a New Branch:**
+
+```bash
 git checkout -b feature/new-widget-name
-Stage and Commit Changes
-bash
-Copy code
+```
+
+**Stage and Commit Changes:**
+
+```bash
 git add .
 git commit -m "feat: implement new widget structure"
-Push to Remote
-bash
-Copy code
-git push origin feature/new-widget-n
+```
+
+**Push to Remote:**
+
+```bash
+git push origin feature/new-widget-name
+```
