@@ -1,139 +1,119 @@
-# widget-preparation
+# Widget Development Process
 
-## 🧩 Widget Development Process
-
-This document outlines the **step-by-step process for developing a new widget** in the **Poper application**.
+This document outlines the step-by-step process for developing a new widget in the Poper application.
 
 ---
 
-## 📁 Directory Structure
+## 1. Directory Structure
 
-Create a new directory for your widget at:
+Create a new directory for your widget in `app/src/pages/widgets/preview/[widget-name]`. A standard widget directory consists of:
 
-```
-app/src/pages/widgets/preview/[widget-name]/
-```
-
-**Standard Widget Directory:**
-
-```
-[widget-name]/
-├── settings.js
-├── front.js
-├── [WidgetName]Preview.js
-├── index.scss        # optional
-└── components/       # optional
-```
-
-**File Descriptions:**
-
-- `settings.js`: Defines the widget's configuration options (inputs shown in the editor).
-- `front.js`: Entry point for the widget. Handles lazy loading in the preview environment.
-- `[WidgetName]Preview.js`: Main React component containing widget logic and UI.
-- `index.scss` (optional): SCSS file for widget-specific styling.
-- `components/` (optional): Directory for reusable sub-components.
+- `settings.js`: Defines the widget's configuration options (inputs seen in the editor).
+- `front.js`: The entry point for the widget, handling lazy loading specific to the preview environment.
+- `[WidgetName]Preview.js`: The main React component containing the widget's logic and UI.
+- `index.scss`: (Optional) SCSS file for styling.
+- `components/`: (Optional) Directory for sub-components.
 
 ---
 
-## ⚙️ Define Settings (`settings.js`)
+## 2. Running the Environment
 
-This file exports a configuration object that determines:
-- How the widget appears in the dashboard
-- What options are available to the user in the editor
+Before development, ensure the environment is running. The project uses npm scripts to start the necessary services.
 
-**Example:**
+```bash
+npm start
+```
+
+This will run the dashboard on http://localhost:3707.
+
+---
+
+## 3. Define Settings (`settings.js`)
+
+This file exports a configuration object that determines how the widget appears in the dashboard and what options are available to the user.
+
+**Example Structure:**
 
 ```js
 const MyWidgetSettings = {
-  id: "my-widget",
-  name: "My Widget",
-  description: "Description of my widget",
-  icon: "/path/to/icon.png",
-  templates: [
-    {
-      id: "default",
-      name: "Default Template",
-      description: "Default layout",
-      options: [
+    id: "my-widget",
+    name: "My Widget",
+    description: "Description of my widget",
+    icon: "/path/to/icon.png",
+    templates: [
         {
-          id: "content",
-          name: "Content",
-          menus: [
-            {
-              id: "title",
-              label: "Title",
-              type: "text", // text, image, color, toggle, repeater, etc.
-              defaultValue: "Hello World"
-            }
-          ]
+            id: "default",
+            name: "Default Template",
+            description: "Default layout",
+            options: [
+                {
+                    id: "content",
+                    name: "Content",
+                    menus: [
+                        {
+                            id: "title",
+                            label: "Title",
+                            type: "text", // Types: text, image, color, toggle, repeater, etc.
+                            defaultValue: "Hello World"
+                        }
+                    ]
+                }
+            ]
         }
-      ]
-    }
-  ]
+    ]
 };
-
 export default MyWidgetSettings;
 ```
 
 ---
 
-## 🚪 Create Entry Point (`front.js`)
+## 4. Create Entry Point (`front.js`)
 
-This file acts as the bridge between the lazy-loading mechanism and the preview component.
+This file acts as the bridge between the lazy-loading mechanism and your actual component. It typically exports the main preview component.
 
 **Example:**
 
 ```js
 import React from "react";
 import MyWidgetPreview from "./MyWidgetPreview";
-
 const Front = (props) => {
   return <MyWidgetPreview {...props} />;
 };
-
 export default Front;
 ```
 
 ---
 
-## 🧠 Implement Component Logic (`[WidgetName]Preview.js`)
+## 5. Implement Component Logic (`[WidgetName]Preview.js`)
 
-This is where the actual widget logic and UI are implemented. Settings defined in `settings.js` are passed as props.
+This is where the actual code for your widget lives. The settings defined in step 2 are passed down as props.
 
 **Example:**
 
 ```js
 import React from "react";
-import "./index.scss";
-
+import "./index.scss"; // Import styles
 const MyWidgetPreview = ({ settings }) => {
+  // Access values defined in settings.js
   const title = settings.title || "Default Title";
-
   return (
     <div className="my-widget-container">
       <h1>{title}</h1>
     </div>
   );
 };
-
 export default MyWidgetPreview;
 ```
 
 ---
 
-## 🧾 Register the Widget
+## 6. Register the Widget
 
-To make the widget available in the application, it must be registered in two places:
+To make the widget available in the application, you need to register it in two places.
 
-### 1. Register Loader (`front-index.js`)
+### A. Register Loader in `front-index.js`
 
-**Path:**
-
-```
-app/src/pages/widgets/preview/front-index.js
-```
-
-**Example:**
+Add the lazy load definition to `app/src/pages/widgets/preview/front-index.js`.
 
 ```js
 const MyWidgetLoadable = React.lazy(() =>
@@ -141,60 +121,74 @@ const MyWidgetLoadable = React.lazy(() =>
     /* webpackChunkName: "widget-my-widget" */
     /* webpackMode: "lazy" */
     "./my-widget/front"
-  )
+  ),
 );
-
+// Add to WIDGETS_LOADABLES object
 const WIDGETS_LOADABLES = {
+  // ... other widgets
   "my-widget": {
     widget: MyWidgetLoadable,
   },
 };
 ```
 
-### 2. Register Settings (`widget-templates.js`)
+### B. Register Settings in `widget-templates.js`
 
-**Path:**
-
-```
-app/src/pages/widgets/data/widget-templates.js
-```
-
-**Example:**
+Add the settings import to `app/src/pages/widgets/data/widget-templates.js`.
 
 ```js
 import MyWidgetSettings from "../preview/my-widget/settings";
-
 export const WIDGET_TEMPLATES = {
+  // ... other widgets
   "my-widget": MyWidgetSettings,
 };
 ```
 
 ---
 
-## 💡 Development Tips
+## 7. Development Tips
 
-- **Unique IDs:** Ensure widget IDs and template IDs are globally unique.
-- **Lazy Loading:** The `front.js` file is crucial for code splitting. ❌ Do not import heavy components directly in `front-index.js`.
-- **CSS Scoping:** Use specific class names or CSS modules to avoid style leakage.
+- **Unique IDs:** Ensure your widget ID and template IDs are unique.
+- **Lazy Loading:** The `front.js` file is crucial for code splitting; do not import the heavy component directly in `front-index.js`.
+- **CSS Scoping:** Use specific class names or CSS modules to avoid styles leaking into other parts of the application.
 
 ---
 
-## 🔁 Version Control (Git)
+## 8. Version Control (Git)
 
-**Create a New Branch:**
+Follow these steps to manage your widget development using Git:
+
+### A. Initialize/Manage Branch
+
+- **Check Status:** See any changes you've made.
+
+```bash
+git status
+```
+
+- **Create New Branch:** Always create a fresh branch for a new widget or feature.
 
 ```bash
 git checkout -b feature/new-widget-name
 ```
 
-**Stage and Commit Changes:**
+### B. Stage and Commit
+
+- **Stage Changes:** Add your new and modified files.
 
 ```bash
 git add .
+```
+
+- **Commit Changes:** Save your snapshot with a descriptive message.
+
+```bash
 git commit -m "feat: implement new widget structure"
 ```
 
-**Push to Remote:**
+### C. Push and Share
+
+- **Push to Remote:** Upload your branch to the repository.
 
 ```bash
 git push origin feature/new-widget-name
