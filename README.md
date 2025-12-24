@@ -244,7 +244,7 @@ import "./my-widget/index.scss";
 
 ## Creating a New Template
 
-### Step 1: Add Template Definition
+### Step 1: Add Template Definition in settings.js
 
 In `widget-templates.js`, add a template to your widget type:
 
