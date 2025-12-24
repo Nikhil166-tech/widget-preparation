@@ -339,35 +339,7 @@ The `MenuInputRenderer` supports these menu types:
 - `rich-text` - Rich text editor
 - `google-color-scheme` - Color scheme selector
 
-### Creating a Custom Field Component
-
-Create `components/myfields/MyCustomField.js`:
-
-```javascript
-import React from "react";
-
-function MyCustomField({ menu, value, onChange, widgetSettings }) {
-  // menu: Menu configuration from template
-  // value: Current value
-  // onChange: Callback to update value
-  // widgetSettings: Full settings object (for dependencies)
-  
-  return (
-    <div>
-      <label>{menu.label}</label>
-      <input
-        type="text"
-        value={value || menu.defaultValue}
-        onChange={(e) => onChange(e.target.value)}
-      />
-    </div>
-  );
-}
-
-export default MyCustomField;
-```
-
-Register in `MenuInputRenderer.js`:
+ `:
 
 ```javascript
 import MyCustomField from "./myfields/MyCustomField";
@@ -446,38 +418,7 @@ function MyTemplatePreview({ settings, viewMode, data }) {
 }
 ```
 
-### Helper Functions
-
-Create `preview/my-widget/utils/helpers.js`:
-
-```javascript
-// Get a setting with fallback
-export const getSetting = (settings, key, defaultValue) => {
-  return settings?.[key] ?? defaultValue;
-};
-
-// Format number
-export const formatNumber = (num) => {
-  if (num >= 1000000) return (num / 1000000).toFixed(1) + "M";
-  if (num >= 1000) return (num / 1000).toFixed(1) + "K";
-  return num.toString();
-};
-```
-
-### Static Data
-
-For preview/testing, create `preview/my-widget/data/staticData.js`:
-
-```javascript
-export const STATIC_DATA = [
-  { id: 1, title: "Item 1", value: 100 },
-  { id: 2, title: "Item 2", value: 200 },
-];
-
-export const STATIC_PROFILE = {
-  name: "John Doe",
-  avatar: "/static/avatar.jpg",
-};
+  
 ```
 
 ---
