@@ -135,8 +135,7 @@ app/src/pages/widgets/
 │   │   ├── front.js                  # Front component router
 │   │   └── index.scss                # Styles
 │   └── ...
-├── embed/
-│   └── {widget-type}.js              # Embed entry points (if needed)
+├      
 └── templates/
     └── index.js                       # Template selection UI
 
